@@ -10,7 +10,7 @@ from pdfminer.pdfinterp import PDFResourceManager, process_pdf
 from pdfminer.converter import TextConverter
 from pdfminer.layout import LAParams
 import io
-def get_data():
+def get_data(folder): 
     caching = True
     rsrcmgr = PDFResourceManager(caching=caching)
     #outfile = path + 'test.txt'
@@ -22,7 +22,7 @@ def get_data():
     pagenos = set()
     maxpages = 0
     password = ''
-    path = 'C:\\Users\\FSU\\Documents\\GitHub\\ramo\\neurons\\'
+    path = f'C:\\Users\\FSU\\Documents\\GitHub\\ramo\\{folder}\\'
     (_, _, files) = next(os.walk(path))
     
     args = [thing for thing in files if thing.endswith('.pdf')] #['10343-10353.pdf']
@@ -40,6 +40,34 @@ def get_data():
         outfp.close()
     docs = file.split('PDFmill')[1:]
     return docs
+
+def isThereACommonPrhase(corpus, numberOfWords=2):   
+    from sklearn.feature_extraction.text import CountVectorizer
+    vectorizer2 = CountVectorizer(analyzer='word', ngram_range=(numberOfWords, numberOfWords))
+    X2 = vectorizer2.fit_transform(corpus)
+    #print(vectorizer2.get_feature_names())
+    array = X2.toarray()
+    goodfeatures = array.sum(axis=0)>len(array)-1
+    from operator import mul
+    from functools import reduce
+    common = reduce(mul, array)
+    from itertools import compress
+    names = compress(vectorizer2.get_feature_names(), common>0)    
+    
+    for name in names:
+        print(f'there is at least one common prhase with words(steams):{name}')
+        return names
+        break
+    else:
+        print(f'there is no common prhase of size {numberOfWords}')
+corpus = get_data('mill')    
+isThereACommonPrhase(corpus, 8)    
+
+
+    
+_ = [print(name) for name in names]
+
+
 
 
 from time import time
@@ -161,8 +189,44 @@ Topic #9: key chip clipper keys encryption government public use secure enforcem
 
 
 
+from sklearn.feature_extraction.text import CountVectorizer
+corpus = data
+vectorizer = CountVectorizer()
+X = vectorizer.fit_transform(corpus)
+print(vectorizer.get_feature_names())
+
+print(X.toarray())
 
 
+# X2.sorted_indices()?
+
+from sklearn.feature_extraction.text import CountVectorizer
+vectorizer2 = CountVectorizer(analyzer='word', ngram_range=(7, 7))
+X2 = vectorizer2.fit_transform(corpus)
+#print(vectorizer2.get_feature_names())
+array = X2.toarray()
+goodfeatures = array.sum(axis=0)>6
+from operator import mul
+from functools import reduce
+common = reduce(mul, array)
+from itertools import compress
+names = compress(vectorizer2.get_feature_names(), common>0)    
+_ = [print(name) for name in names]
+
+bigCounter = Counter()
+
+for data in docs:
+    tempC = Counter()
+    vectorizer2 = CountVectorizer(analyzer='word', ngram_range=(3, 3))
+    X2 = vectorizer2.fit_transform(data)
+    X.toarray()
+
+#print(X2.vocabulary_)
+from collections import Counter
+counter = Counter()
+counter.update(data)
+most_common = counter.most_common(20)
+most_common
 
 
 
