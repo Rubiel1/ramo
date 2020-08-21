@@ -62,7 +62,7 @@ def isThereACommonPrhase(corpus, numberOfWords=2):
     X2 = vectorizer2.fit_transform(corpus)
     array = X2.toarray()
     common = reduce(mul, array)
-    names = compress(vectorizer2.get_feature_names(), common>0)    
+    names = compress(vectorizer2.get_feature_names(), common)    
     second = list(names)
     for name in second:
         print(f"\n--- list of common sentences with {numberOfWords} words:\n\n{second}")
@@ -74,13 +74,13 @@ def isThereACommonPrhase(corpus, numberOfWords=2):
 
 def howManyCommonWords(corpus, numberOfWords=1):
     # we search for words shared by all documents
-    vectorizer2 = CountVectorizer(analyzer='word', ngram_range=(numberOfWords, numberOfWords))
+    vectorizer2 = CountVectorizer(analyzer='word', ngram_range=(numberOfWords, numberOfWords), binary=True)
     X2 = vectorizer2.fit_transform(corpus)
     array = X2.toarray()
     common = reduce(mul, array)
-    numberOfPhrases = sum(common>0)
+    numberOfPhrases = sum(common)
     print(f"All documents share {numberOfPhrases} words")
-    names = compress(vectorizer2.get_feature_names(), common>0)
+    names = compress(vectorizer2.get_feature_names(), common)
     print(list(names))
 
 
@@ -101,8 +101,6 @@ def analyzer(folder='mill', size=4):
     while value:
         value = isThereACommonPrhase(corpus, size)
         size = size +1
-    print(f"\nThe longest common phrase has {size-2} words")
-
 
 if __name__ == "__main__":
     print("The function analyzer has two parameters, the name of the folder and the size")
