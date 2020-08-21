@@ -6,5 +6,8 @@ Note that size = 1 asks for all words shared by all documents, we actually retur
 Example:
 analyzer("mill",3)
 
+After don Quijote lost his spade while attacking the mill, he explained to Sancho the advantages of using a "ramo" instead of a "espada":
 # ramo
--Yo me acuerdo haber leído que un caballero español llamado Diego Pérez de Vargas, habiéndosele en una batalla roto la espada, desgajó de una encina un pesado ramo o tronco, y con él hizo tales cosas aquel día, y machacó tantos moros, que le quedó por sobrenombre Machuca...
+"-Yo me acuerdo haber leído que un caballero español llamado Diego Pérez de Vargas, habiéndosele en una batalla roto la espada, desgajó de una encina un pesado ramo o tronco, y con él hizo tales cosas aquel día, y machacó tantos moros, que le quedó por sobrenombre Machuca..."
+Don Quixote
+Novel by Miguel de Cervantes
