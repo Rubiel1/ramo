@@ -1,3 +1,6 @@
+This program reads several pdf's located on the folder and finds common prases among all files. It also returns all common words.
+
+
 The function analyzer has two parameters, the name of the folder and the size
 -the folder should be located at the same place that the file main,
 -size is the minimun number of words that a phrase should have.
