@@ -6,8 +6,10 @@ Created on Sat Aug 15 10:21:49 2020
 I used code available on https://scikit-learn.org
 """
 
+
 import os
-from pdfminer.pdfinterp import PDFResourceManager, process_pdf
+from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
+from pdfminer.pdfpage import PDFPage
 from pdfminer.converter import TextConverter
 from pdfminer.layout import LAParams
 import io
@@ -16,11 +18,17 @@ from operator import mul
 from functools import reduce
 from itertools import compress
 from sklearn.feature_extraction.text import CountVectorizer
-
+from datetime import datetime
 
 logging.propagate = False 
 logging.getLogger().setLevel(logging.ERROR)
 
+def process_pdf(rsrcmgr, device, fp, pagenos=None, maxpages=0, password='', caching=True, check_extractable=True):
+  interpreter = PDFPageInterpreter(rsrcmgr, device)
+  for page in PDFPage.get_pages(fp, pagenos, maxpages=maxpages, password=password,
+              caching=caching, check_extractable=check_extractable):
+    interpreter.process_page(page)
+  return
 
 def get_data(folder): 
     # we read the pdf files in the folder
