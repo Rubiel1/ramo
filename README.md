@@ -11,11 +11,14 @@ Example:
 analyzer("mill",3)
 
 Requirements:
+
 numpy
+
 scipy
-sklearn
-pdfminer
-logging
+
+scikit-learn==0.23.1
+
+pdfminer>=1.3.1 
 
 After don Quijote lost his spade while attacking the mill, he explained to Sancho the advantages of using a "ramo" instead of a "espada":
 # ramo
