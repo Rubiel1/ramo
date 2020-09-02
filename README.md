@@ -11,13 +11,13 @@ The function analyzer has two parameters, the name of the folder and the size
 Note that size = 1 asks for all words shared by all documents, we actually return this value, so use size>1.
 
 Example:
-analyzer("mill",3)
+>> analyzer("mill",3)
 
 Requirements:
-numpy
-scipy
-scikit-learn==0.23.1
-pdfminer>=1.3.1 
+- numpy
+- scipy
+- scikit-learn==0.23.1
+- pdfminer>=1.3.1 
 
 
 ### ramo
