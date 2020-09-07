@@ -3,6 +3,7 @@
 Created on Sat Aug 15 10:21:49 2020
 
 @author: Dr. Eric Dolores
+@co-author: Roberto Maldonado
 I used code available on https://scikit-learn.org
 """
 
@@ -20,6 +21,11 @@ from sklearn.feature_extraction.text import CountVectorizer
 
 
 def process_pdf(rsrcmgr, device, fp, pagenos=None, maxpages=0, password='', caching=True, check_extractable=True):
+    """
+    This functons processes the pdf pages.
+    Args: 
+    Returns:
+    """
     interpreter = PDFPageInterpreter(rsrcmgr, device)
     for page in PDFPage.get_pages(fp, pagenos, maxpages=maxpages, password=password,
               caching=caching, check_extractable=check_extractable):
@@ -28,7 +34,12 @@ def process_pdf(rsrcmgr, device, fp, pagenos=None, maxpages=0, password='', cach
 
 
 def get_data(folder): 
-    # we read the pdf files in the folder
+    """
+    This fucntion reads the PDF files in the given folder
+    Args: 
+        folder, 
+    Returns:
+    """
     caching = True
     rsrcmgr = PDFResourceManager(caching=caching)
     outfp = io.StringIO()
@@ -63,7 +74,14 @@ def get_data(folder):
 
 
 def isThereACommonPrhase(corpus, numberOfWords=2, fileName="results.txt"):
-    # we search for phrases with numberOfWords words
+    """
+    This function searches for phrases with a given numberOfWords
+    Args: 
+        corpus, 
+        numberOfWords,
+        fileName, 
+    Returns:
+    """
     vectorizer2 = CountVectorizer(analyzer='word', ngram_range=(numberOfWords, numberOfWords), binary=True)
     X2 = vectorizer2.fit_transform(corpus)
     array = X2.toarray()
@@ -81,7 +99,14 @@ def isThereACommonPrhase(corpus, numberOfWords=2, fileName="results.txt"):
 
 
 def howManyCommonWords(corpus, numberOfWords=1, fileName="results.txt"):
-    # we search for words shared by all documents
+    """
+    This function searches for words shared by all documents if there are common phrases
+    Args: 
+        corpus, 
+        numberOfWords,
+        fileName, 
+    Returns:
+    """
     vectorizer2 = CountVectorizer(analyzer='word', ngram_range=(numberOfWords, numberOfWords), binary=True)
     X2 = vectorizer2.fit_transform(corpus)
     array = X2.toarray()
@@ -94,10 +119,16 @@ def howManyCommonWords(corpus, numberOfWords=1, fileName="results.txt"):
         f.writelines(firstiter)
 
 
-def analyzer(nameOfFolder='mill', size=4, file_Name="results.txt"):    
-    # folder should be located at the same place of this file,
-    # size is the minimun number of words that a phrase should have
-    # to be considered
+def analyzer(nameOfFolder='mill', size=4, file_Name="results.txt"): 
+    
+    """
+    This fucntion reads the PDF files in the given folder
+    Args: 
+        nameOfFolder, should be located at the same place of this file
+        size, minimun number of words that a phrase should have to be consideres
+        file_Name, Name for the file that stores results
+    Returns:
+    """
     fileName = file_Name  #"/tmp/"+file_Name
     with open(fileName, 'w') as f:
         f.write("\n \n =================This program finds common phrases on different pdf files.\n")
@@ -127,9 +158,11 @@ def analyzer(nameOfFolder='mill', size=4, file_Name="results.txt"):
         size = size +1
 
 if __name__ == "__main__":
-    print("The function analyzer has two parameters, the name of the folder and the size")
-    print(" -the folder should be located at the same place that this file,")
-    print(" -size is the minimun number of words that a phrase should have")
-    print("  note that size = 1 asks for all words shared by all documents")
-    print("we actually return this value, so use size>1")
+    description = "The function analyzer has two parameters: The name of the folder and the size. \
+                    \nThe folder should be located at the same place where this file is\
+                    \n-Size is the minimun number of words that a phrase should have \
+                    \n*Note: Size = 1 asks for all words shared by all documents \
+                    actually return this value, so use size > 1"
+    print(f'{description}')
+
     analyzer("mill",2)
