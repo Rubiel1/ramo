@@ -10,7 +10,8 @@ I used code available on https://scikit-learn.org
 
 import os
 import io
-from itertools import compressfrom operator import mul
+from itertools import compress
+from operator import mul
 from functools import reduce
 from pdfminer.layout import LAParams
 from pdfminer.pdfpage import PDFPage
@@ -19,7 +20,7 @@ from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from sklearn.feature_extraction.text import CountVectorizer
 
 
-def process_pdf(rsrcmgr, device, fp, pagenos=None, maxpages=0, password='', caching=True, check_extractable=True):
+def processPDF(rsrcmgr, device, fp, pagenos=None, maxpages=0, password='', caching=True, check_extractable=True):
     """
     This function processes the pdf pages.
     Args: 
@@ -40,7 +41,7 @@ def process_pdf(rsrcmgr, device, fp, pagenos=None, maxpages=0, password='', cach
     return
 
 
-def get_data(folder): 
+def getData(folder): 
     """
     This function reads the PDF files in the given folder
     Args: 
@@ -67,7 +68,7 @@ def get_data(folder):
     for fname in args:
         outfp.write('PDFmill')
         fp = io.open(os.path.join(path,fname), 'rb')
-        process_pdf(rsrcmgr, device, fp, pagenos, maxpages=maxpages, password=password,
+        processPDF(rsrcmgr, device, fp, pagenos, maxpages=maxpages, password=password,
                     caching=caching, check_extractable=True)
         fp.close()
     
@@ -126,27 +127,29 @@ def commonWordCount(corpus, numberOfWords=1, fileName="results.txt"):
         f.writelines(firstiter)
 
 
-def analyzer(nameOfFolder='mill', size=4, file_Name="results.txt"): 
+def analyzer(folderName='mill', size=4, defaultFilename="results.txt"): 
     """
     This function reads the PDF files in the given folder
     Args: 
-        nameOfFolder, should be located at the same place of this file
+        folderName, should be located at the same place of this file
         size, minimun number of words that a phrase should have to be consideres
-        file_Name, Name for the file that stores results
+        defaultFilename, Name for the file that stores results
     Returns:
     """
-    fileName = file_Name  #"/tmp/"+file_Name
+    fileName = defaultFilename  #"/tmp/"+defaultFilename
     with open(fileName, 'w') as f:
         f.write("\n \n =================This program finds common phrases on different pdf files.\n")
         f.write("\n \n =================For any suggestion contact me at eric.rubiel@u.northwestern.edu\n")
         f.write("\n \n =================We first analyze words shared by all documents\n")
-    folder = nameOfFolder  # for google collab'/content/drive/My Drive/'+nameOfFolder
+
+    folder = folderName  # for google collab'/content/drive/My Drive/'+folderName
     if size<1 or type(size) != type(2):
         print("provide an integrer size>1")
         with open(fileName, 'a') as f:
             f.write(f"wrong input")
         return False
-    corpus = get_data(f'{folder}')
+
+    corpus = getData(f'{folder}')
     if not corpus:
         with open(fileName, 'a') as f:
             f.write(f"wrong files")
@@ -160,7 +163,7 @@ def analyzer(nameOfFolder='mill', size=4, file_Name="results.txt"):
             f.write("\n \n =================Now we search for common phrases of lenght >3\n")
     print("\n=================now we search for common phrases of lenght >3\n")
     value = True
-    
+
     while value:
         value = isThereACommonPhrase(corpus, size, fileName)
         size = size +1
