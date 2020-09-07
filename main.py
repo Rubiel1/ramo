@@ -3,32 +3,54 @@
 Created on Sat Aug 15 10:21:49 2020
 
 @author: Dr. Eric Dolores
-I used code available on https://scikit-learn.org
+@co-author: Roberto Maldonado
+We used code available on https://scikit-learn.org
 """
 
 
 import os
-from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
-from pdfminer.pdfpage import PDFPage
-from pdfminer.converter import TextConverter
-from pdfminer.layout import LAParams
 import io
+from itertools import compress
 from operator import mul
 from functools import reduce
-from itertools import compress
+from pdfminer.layout import LAParams
+from pdfminer.converter import TextConverter
 from sklearn.feature_extraction.text import CountVectorizer
+try:
+    from pdfminer.pdfpage import PDFPage
+    from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
+    def processPDF(rsrcmgr, device, fp, pagenos=None, maxpages=0, password='', caching=True, check_extractable=True):
+        """
+        This function processes the pdf pages.
+        Args: 
+            rsrcmgr,
+            device,
+            fp,
+            pagenos,
+            maxpages,
+            password,
+            caching, 
+            check_extractable, 
+        Returns:
+        """
+        interpreter = PDFPageInterpreter(rsrcmgr, device)
+        for page in PDFPage.get_pages(fp, pagenos, maxpages=maxpages, password=password,
+                  caching=caching, check_extractable=check_extractable):
+            interpreter.process_page(page)
+        return
+
+except ModuleNotFoundError:
+    from pdfminer.pdfinterp import PDFResourceManager, process_pdf as processPDF #test
 
 
-def process_pdf(rsrcmgr, device, fp, pagenos=None, maxpages=0, password='', caching=True, check_extractable=True):
-    interpreter = PDFPageInterpreter(rsrcmgr, device)
-    for page in PDFPage.get_pages(fp, pagenos, maxpages=maxpages, password=password,
-              caching=caching, check_extractable=check_extractable):
-        interpreter.process_page(page)
-    return
 
-
-def get_data(folder): 
-    # we read the pdf files in the folder
+def getData(folder): 
+    """
+    This function reads the PDF files in the given folder
+    Args: 
+        folder, 
+    Returns:
+    """
     caching = True
     rsrcmgr = PDFResourceManager(caching=caching)
     outfp = io.StringIO()
@@ -49,7 +71,7 @@ def get_data(folder):
     for fname in args:
         outfp.write('PDFmill')
         fp = io.open(os.path.join(path,fname), 'rb')
-        process_pdf(rsrcmgr, device, fp, pagenos, maxpages=maxpages, password=password,
+        processPDF(rsrcmgr, device, fp, pagenos, maxpages=maxpages, password=password,
                     caching=caching, check_extractable=True)
         fp.close()
     
@@ -62,26 +84,40 @@ def get_data(folder):
     return docs
 
 
-def isThereACommonPrhase(corpus, numberOfWords=2, fileName="results.txt"):
-    # we search for phrases with numberOfWords words
+def isThereACommonPhrase(corpus, numberOfWords=2, fileName="results.txt"):
+    """
+    This function searches for phrases with a given numberOfWords
+    Args: 
+        corpus, 
+        numberOfWords,
+        fileName, 
+    Returns:
+    """
     vectorizer2 = CountVectorizer(analyzer='word', ngram_range=(numberOfWords, numberOfWords), binary=True)
     X2 = vectorizer2.fit_transform(corpus)
     array = X2.toarray()
     common = reduce(mul, array)
     if (sum(common))<1:
-      print(f'  =================there is no common prhase of size {numberOfWords}')
+      print(f"{'='*10}there is no common prhase of size {numberOfWords}")
       return  False
     names = compress(vectorizer2.get_feature_names(), common)    
     second = "\n ".join(list(names))
     with open(fileName, 'a') as f:
-        f.write(f"\n \n  =================list of common sentences with {numberOfWords} words:\n\n")
+        f.write(f"\n \n{'='*10}list of common sentences with {numberOfWords} words:\n\n")
         f.writelines(second)
-        print(f"\n \n  =================there are {(sum(common))} common sentences with {numberOfWords} words")
+        print(f"\n \n{'='*10} there are {(sum(common))} common sentences with {numberOfWords} words")
         return  True
 
 
-def howManyCommonWords(corpus, numberOfWords=1, fileName="results.txt"):
-    # we search for words shared by all documents
+def commonWordCount(corpus, numberOfWords=1, fileName="results.txt"):
+    """
+    This function searches for words shared by all documents if there are common phrases
+    Args: 
+        corpus, 
+        numberOfWords,
+        fileName, 
+    Returns:
+    """
     vectorizer2 = CountVectorizer(analyzer='word', ngram_range=(numberOfWords, numberOfWords), binary=True)
     X2 = vectorizer2.fit_transform(corpus)
     array = X2.toarray()
@@ -90,46 +126,62 @@ def howManyCommonWords(corpus, numberOfWords=1, fileName="results.txt"):
     names = compress(vectorizer2.get_feature_names(), common)
     firstiter = ", ".join(list(names))
     with open(fileName, 'a') as f:
-        f.write(f"\n \n =================All documents share {numberOfPhrases} words:\n\n")
+        f.write(f"\n \n {'='*10} All documents share {numberOfPhrases} words:\n\n")
         f.writelines(firstiter)
 
 
-def analyzer(nameOfFolder='mill', size=4, file_Name="results.txt"):    
-    # folder should be located at the same place of this file,
-    # size is the minimun number of words that a phrase should have
-    # to be considered
-    fileName = file_Name  #"/tmp/"+file_Name
+def analyzer(folderName='mill', size=4, defaultFilename="results.txt"): 
+    """
+    This function reads the PDF files in the given folder
+    Args: 
+        folderName, should be located at the same place of this file
+        size, minimun number of words that a phrase should have to be consideres
+        defaultFilename, Name for the file that stores results
+    Returns:
+    """
+    fileName = defaultFilename  #"/tmp/"+defaultFilename
     with open(fileName, 'w') as f:
-        f.write("\n \n =================This program finds common phrases on different pdf files.\n")
-        f.write("\n \n =================For any suggestion contact me at eric.rubiel@u.northwestern.edu\n")
-        f.write("\n \n =================We first analyze words shared by all documents\n")
-    folder = nameOfFolder  # for google collab'/content/drive/My Drive/'+nameOfFolder
+        dev_note = "This program finds common phrases on different PDF files.\nFor any inquiries/suggestions please contact at eric.rubiel[at]u.northwestern.edu \n"
+        f.write(f"{'='*10}{dev_note}")
+
+        step_one = "Step 1. Analyzing words shared by all documents \n"
+        f.write(f"{'='*10}{step_one}")
+
+    folder = folderName  # for google collab'/content/drive/My Drive/'+folderName
     if size<1 or type(size) != type(2):
         print("provide an integrer size>1")
         with open(fileName, 'a') as f:
             f.write(f"wrong input")
         return False
-    corpus = get_data(f'{folder}')
+
+    corpus = getData(f'{folder}')
     if not corpus:
         with open(fileName, 'a') as f:
             f.write(f"wrong files")
         return None
     
-    print("\n \n =================The actual words are returned in the txt that is downloaded for future manipulation.\n")
-    print("\n=================We first analyze words shared by all documents\n")
-    howManyCommonWords(corpus, 1, fileName)
+    print(f"\n \n {'='*10} The actual words are returned in the txt that is downloaded for future manipulation.\n")
+    print(f"\n{'='*10} We first analyze words shared by all documents\n")
+    commonWordCount(corpus, 1, fileName)
+
     with open(fileName, 'a') as f:
-            f.write("\n \n =================Now we search for common phrases of lenght >3\n")
-    print("\n=================now we search for common phrases of lenght >3\n")
+            f.write(f"\n \n {'='*10} Now we search for common phrases of lenght >3\n")
+    print(f"{'='*10} now we search for common phrases of lenght >3\n")
     value = True
+
     while value:
-        value = isThereACommonPrhase(corpus, size, fileName)
+        value = isThereACommonPhrase(corpus, size, fileName)
         size = size +1
+    
+    print(f"\n \n {'='*10} The actual words are returned in the txt that is downloaded for future manipulation.\n")
+   
 
 if __name__ == "__main__":
-    print("The function analyzer has two parameters, the name of the folder and the size")
-    print(" -the folder should be located at the same place that this file,")
-    print(" -size is the minimun number of words that a phrase should have")
-    print("  note that size = 1 asks for all words shared by all documents")
-    print("we actually return this value, so use size>1")
+    description = "The function analyzer has two parameters: The name of the folder and the size. \
+                    \nThe folder should be located at the same place where this file is\
+                    \n-Size is the minimun number of words that a phrase should have \
+                    \n*Note: Size = 1 asks for all words shared by all documents \
+                    actually return this value, so use size > 1"
+    print(f'{description}')
+
     analyzer("mill",2)
