@@ -95,14 +95,14 @@ def isThereACommonPhrase(corpus, numberOfWords=2, fileName="results.txt"):
     array = X2.toarray()
     common = reduce(mul, array)
     if (sum(common))<1:
-      print(f'  =================there is no common prhase of size {numberOfWords}')
+      print(f'{'='*10}there is no common prhase of size {numberOfWords}')
       return  False
     names = compress(vectorizer2.get_feature_names(), common)    
     second = "\n ".join(list(names))
     with open(fileName, 'a') as f:
-        f.write(f"\n \n  =================list of common sentences with {numberOfWords} words:\n\n")
+        f.write(f"\n \n{'='*10}list of common sentences with {numberOfWords} words:\n\n")
         f.writelines(second)
-        print(f"\n \n  =================there are {(sum(common))} common sentences with {numberOfWords} words")
+        print(f"\n \n{'='*10} there are {(sum(common))} common sentences with {numberOfWords} words")
         return  True
 
 
@@ -123,7 +123,7 @@ def commonWordCount(corpus, numberOfWords=1, fileName="results.txt"):
     names = compress(vectorizer2.get_feature_names(), common)
     firstiter = ", ".join(list(names))
     with open(fileName, 'a') as f:
-        f.write(f"\n \n =================All documents share {numberOfPhrases} words:\n\n")
+        f.write(f"\n \n {'='*10} All documents share {numberOfPhrases} words:\n\n")
         f.writelines(firstiter)
 
 
@@ -157,13 +157,13 @@ def analyzer(folderName='mill', size=4, defaultFilename="results.txt"):
             f.write(f"wrong files")
         return None
     
-    print("\n \n =================The actual words are returned in the txt that is downloaded for future manipulation.\n")
-    print("\n=================We first analyze words shared by all documents\n")
+    print(f"\n \n {'='*10} The actual words are returned in the txt that is downloaded for future manipulation.\n")
+    print(f"\n{'='*10} We first analyze words shared by all documents\n")
     commonWordCount(corpus, 1, fileName)
 
     with open(fileName, 'a') as f:
-            f.write("\n \n =================Now we search for common phrases of lenght >3\n")
-    print("\n=================now we search for common phrases of lenght >3\n")
+            f.write(f"\n \n {'='*10} Now we search for common phrases of lenght >3\n")
+    print(f"{'='*10} now we search for common phrases of lenght >3\n")
     value = True
 
     while value:
