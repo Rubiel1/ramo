@@ -9,21 +9,28 @@ I used code available on https://scikit-learn.org
 
 
 import os
-from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
+import io
+from itertools import compressfrom operator import mul
+from functools import reduce
+from pdfminer.layout import LAParams
 from pdfminer.pdfpage import PDFPage
 from pdfminer.converter import TextConverter
-from pdfminer.layout import LAParams
-import io
-from operator import mul
-from functools import reduce
-from itertools import compress
+from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from sklearn.feature_extraction.text import CountVectorizer
 
 
 def process_pdf(rsrcmgr, device, fp, pagenos=None, maxpages=0, password='', caching=True, check_extractable=True):
     """
-    This functons processes the pdf pages.
+    This function processes the pdf pages.
     Args: 
+        rsrcmgr,
+        device,
+        fp,
+        pagenos,
+        maxpages,
+        password,
+        caching, 
+        check_extractable, 
     Returns:
     """
     interpreter = PDFPageInterpreter(rsrcmgr, device)
@@ -35,7 +42,7 @@ def process_pdf(rsrcmgr, device, fp, pagenos=None, maxpages=0, password='', cach
 
 def get_data(folder): 
     """
-    This fucntion reads the PDF files in the given folder
+    This function reads the PDF files in the given folder
     Args: 
         folder, 
     Returns:
@@ -73,7 +80,7 @@ def get_data(folder):
     return docs
 
 
-def isThereACommonPrhase(corpus, numberOfWords=2, fileName="results.txt"):
+def isThereACommonPhrase(corpus, numberOfWords=2, fileName="results.txt"):
     """
     This function searches for phrases with a given numberOfWords
     Args: 
@@ -98,7 +105,7 @@ def isThereACommonPrhase(corpus, numberOfWords=2, fileName="results.txt"):
         return  True
 
 
-def howManyCommonWords(corpus, numberOfWords=1, fileName="results.txt"):
+def commonWordCount(corpus, numberOfWords=1, fileName="results.txt"):
     """
     This function searches for words shared by all documents if there are common phrases
     Args: 
@@ -120,9 +127,8 @@ def howManyCommonWords(corpus, numberOfWords=1, fileName="results.txt"):
 
 
 def analyzer(nameOfFolder='mill', size=4, file_Name="results.txt"): 
-    
     """
-    This fucntion reads the PDF files in the given folder
+    This function reads the PDF files in the given folder
     Args: 
         nameOfFolder, should be located at the same place of this file
         size, minimun number of words that a phrase should have to be consideres
@@ -148,13 +154,15 @@ def analyzer(nameOfFolder='mill', size=4, file_Name="results.txt"):
     
     print("\n \n =================The actual words are returned in the txt that is downloaded for future manipulation.\n")
     print("\n=================We first analyze words shared by all documents\n")
-    howManyCommonWords(corpus, 1, fileName)
+    commonWordCount(corpus, 1, fileName)
+
     with open(fileName, 'a') as f:
             f.write("\n \n =================Now we search for common phrases of lenght >3\n")
     print("\n=================now we search for common phrases of lenght >3\n")
     value = True
+    
     while value:
-        value = isThereACommonPrhase(corpus, size, fileName)
+        value = isThereACommonPhrase(corpus, size, fileName)
         size = size +1
 
 if __name__ == "__main__":
