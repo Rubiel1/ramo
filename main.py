@@ -138,9 +138,11 @@ def analyzer(folderName='mill', size=4, defaultFilename="results.txt"):
     """
     fileName = defaultFilename  #"/tmp/"+defaultFilename
     with open(fileName, 'w') as f:
-        f.write("\n \n =================This program finds common phrases on different pdf files.\n")
-        f.write("\n \n =================For any suggestion contact me at eric.rubiel@u.northwestern.edu\n")
-        f.write("\n \n =================We first analyze words shared by all documents\n")
+        dev_note = "This program finds common phrases on different PDF files.\nFor any inquiries/suggestions please contact at eric.rubiel[at]u.northwestern.edu \n"
+        f.write(f"{'='*10}{dev_note}")
+
+        step_one = "Step 1. Analyzing words shared by all documents \n"
+        f.write(f"{'='*10}{step_one}")
 
     folder = folderName  # for google collab'/content/drive/My Drive/'+folderName
     if size<1 or type(size) != type(2):
