@@ -1,4 +1,4 @@
 numpy
 scipy
--U scikit-learn==0.23.1
+scikit-learn==0.23.1
 pdfminer>=1.3.1 
