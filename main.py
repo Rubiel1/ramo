@@ -4,7 +4,7 @@ Created on Sat Aug 15 10:21:49 2020
 
 @author: Dr. Eric Dolores
 @co-author: Roberto Maldonado
-I used code available on https://scikit-learn.org
+We used code available on https://scikit-learn.org
 """
 
 
@@ -14,31 +14,34 @@ from itertools import compress
 from operator import mul
 from functools import reduce
 from pdfminer.layout import LAParams
-from pdfminer.pdfpage import PDFPage
 from pdfminer.converter import TextConverter
-from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from sklearn.feature_extraction.text import CountVectorizer
+try:
+    from pdfminer.pdfpage import PDFPage
+    from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
+    def processPDF(rsrcmgr, device, fp, pagenos=None, maxpages=0, password='', caching=True, check_extractable=True):
+        """
+        This function processes the pdf pages.
+        Args: 
+            rsrcmgr,
+            device,
+            fp,
+            pagenos,
+            maxpages,
+            password,
+            caching, 
+            check_extractable, 
+        Returns:
+        """
+        interpreter = PDFPageInterpreter(rsrcmgr, device)
+        for page in PDFPage.get_pages(fp, pagenos, maxpages=maxpages, password=password,
+                  caching=caching, check_extractable=check_extractable):
+            interpreter.process_page(page)
+        return
 
+except ModuleNotFoundError:
+    from pdfminer.pdfinterp import PDFResourceManager, process_pdf as processPDF #test
 
-def processPDF(rsrcmgr, device, fp, pagenos=None, maxpages=0, password='', caching=True, check_extractable=True):
-    """
-    This function processes the pdf pages.
-    Args: 
-        rsrcmgr,
-        device,
-        fp,
-        pagenos,
-        maxpages,
-        password,
-        caching, 
-        check_extractable, 
-    Returns:
-    """
-    interpreter = PDFPageInterpreter(rsrcmgr, device)
-    for page in PDFPage.get_pages(fp, pagenos, maxpages=maxpages, password=password,
-              caching=caching, check_extractable=check_extractable):
-        interpreter.process_page(page)
-    return
 
 
 def getData(folder): 
@@ -95,7 +98,7 @@ def isThereACommonPhrase(corpus, numberOfWords=2, fileName="results.txt"):
     array = X2.toarray()
     common = reduce(mul, array)
     if (sum(common))<1:
-      print(f'{'='*10}there is no common prhase of size {numberOfWords}')
+      print(f"{'='*10}there is no common prhase of size {numberOfWords}")
       return  False
     names = compress(vectorizer2.get_feature_names(), common)    
     second = "\n ".join(list(names))
@@ -169,6 +172,9 @@ def analyzer(folderName='mill', size=4, defaultFilename="results.txt"):
     while value:
         value = isThereACommonPhrase(corpus, size, fileName)
         size = size +1
+    
+    print(f"\n \n {'='*10} The actual words are returned in the txt that is downloaded for future manipulation.\n")
+   
 
 if __name__ == "__main__":
     description = "The function analyzer has two parameters: The name of the folder and the size. \
