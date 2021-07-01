@@ -3,7 +3,7 @@ PROJECT RAMO
 
 This program reads several pdf's located on the folder and finds common phrases among all files. It also returns all common words. Fake research papers may share common words, and this tool automatizes the search for common prhases.
 
-You dont need to know how to code to use this program just follow the colab notebook at https://colab.research.google.com/drive/1gi2MkeeGeNUlhQ42dOOII6_NeHLlRsd6?usp=sharing
+You dont need to know how to code to use this program just follow the colab notebook at https://colab.research.google.com/drive/1ZdOw8O5Bwq9WKFIPbHlcUTHKLFPyVmJn?usp=sharing
 
 The function analyzer has two parameters, the name of the folder and the size
 -the folder should be located at the same place that the file main,
